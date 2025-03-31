@@ -17,11 +17,18 @@ const CurrencyConverter = () => {
   });
 
   // API Configuration
-  const API_KEY = process.env.REACT_APP_API_KEY;
-  const API_URL = 'https://api.exchangerate-api.com/v4/latest/';
+  // const API_KEY = process.env.REACT_APP_API_KEY;
+  // const API_URL = `https://v6.exchangerate-api.com/v4/${API_KEY}/latest/`;
+
+
+
+  // New API URL pointing to our Node.js backend
+  const API_URL = 'http://localhost:5000/api/rates/';
+
+
 
   // List of currencies with code, name, and symbol
-  const currencies = [
+ const currencies = [
     { value: '', label: 'Select Currency', symbol: '' },
     { value: 'USD', label: 'US Dollar', symbol: '$' },
     { value: 'EUR', label: 'Euro', symbol: '€' },

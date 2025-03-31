@@ -17,7 +17,7 @@ body {
   justify-content: center;
   align-items: center;
   background: var(--bg-gradient-light);
-  transition: background 0.3s ease;
+  transition:  0.3s ease;
 }
 
 body[data-theme="dark"] {
