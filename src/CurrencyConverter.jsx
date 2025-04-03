@@ -17,13 +17,13 @@ const CurrencyConverter = () => {
   });
 
   // API Configuration
-  // const API_KEY = process.env.REACT_APP_API_KEY;
-  // const API_URL = `https://v6.exchangerate-api.com/v4/${API_KEY}/latest/`;
+  const API_KEY = process.env.REACT_APP_API_KEY;
+  const API_URL = `https://v6.exchangerate-api.com/v6/${API_KEY}/latest/`;
 
 
 
-  // New API URL pointing to our Node.js backend
-  const API_URL = 'http://localhost:5000/api/rates/';
+  // // New API URL pointing to our Node.js backend
+  // const API_URL = 'http://localhost:5000/api/rates/';
 
 
 
@@ -168,7 +168,7 @@ const CurrencyConverter = () => {
     { value: 'TJS', label: 'Tajikistani Somoni', symbol: 'SM' },
     { value: 'TMT', label: 'Turkmenistani Manat', symbol: 'T' },
     { value: 'TND', label: 'Tunisian Dinar', symbol: 'DT' },
-    { value: 'TOP', label: 'Tongan Paʻanga', symbol: 'T$' },
+    { value: 'TOP', label: 'Tongan Paanga', symbol: 'T$' },
     { value: 'TRY', label: 'Turkish Lira', symbol: '₺' },
     { value: 'TTD', label: 'Trinidad and Tobago Dollar', symbol: 'TT$' },
     { value: 'TVD', label: 'Tuvaluan Dollar', symbol: '$' },
@@ -207,37 +207,36 @@ const CurrencyConverter = () => {
 
   // Fetch exchange rates
   const fetchRates = useCallback(async () => {
-    // Don't fetch if no currency is selected
-    if (!fromCurrency) {
+    if (!fromCurrency || !API_KEY) {
       return;
     }
-    
-    // Don't fetch if we already have recent rates (less than 1 hour old)
+  
+    // Avoid fetching if we have recent rates
     if (lastUpdated && Date.now() - lastUpdated < 3600000) {
       return;
     }
-
+  
+    setLoading(true);
+    setError('');
     try {
-      setLoading(true);
-      setError('');
       const response = await fetch(`${API_URL}${fromCurrency}`);
-      if (!response.ok) throw new Error('Failed to fetch exchange rates');
+      if (!response.ok) {
+        throw new Error('Failed to fetch exchange rates');
+      }
       const data = await response.json();
       if (data.result === "error") {
-        throw new Error(data["error-type"] || 'Failed to fetch exchange rates');
+        throw new Error(data['error-type'] || 'Failed to fetch exchange rates');
       }
       setRates(data.conversion_rates);
       setLastUpdated(Date.now());
     } catch (err) {
       console.error('Error fetching rates:', err);
-      // Only set error if there's an amount entered
-      if (amount) {
-        setError('Could not load exchange rates. Please try again later.');
-      }
+      setError('Could not load exchange rates. Please try again later.');
     } finally {
       setLoading(false);
     }
-  }, [fromCurrency, lastUpdated, API_URL, amount]);
+  }, [fromCurrency, lastUpdated, API_URL]);
+  
 
   // Initial fetch and currency change handler
   useEffect(() => {
